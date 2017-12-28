@@ -11,23 +11,28 @@ const server = app.listen(port, () => {
 
 const io = require('socket.io').listen(server);
 
+var rooms = {}
+
 io.sockets.on('connection', (socket) => {
-  socket.on('set nickname', (name) => {
-    socket.nickname = name;
-    socket.broadcast.emit('new user', {
-      nickname: name,
-      type: 'user',
-    });
-    socket.emit('login', {
-      nickname: name,
-      id: socket.id,
-    });
+  var roomId = ''
+  socket.on('join room', (info) => {
+    roomId = info.roomId
+    if (rooms[roomId] && rooms[roomId].length === 2) {
+      socket.emit('error message', '房间人满了，换个房间吧');
+      return
+    }
+    socket.join(roomId);
+
+    if (!rooms[roomId]) rooms[roomId] = []
+
+    socket.emit('getHeroType', rooms[roomId].length);
+
+    rooms[roomId].push(info.userName)
+
+    socket.to(roomId).broadcast.emit('add user', info.userName);
   });
-  socket.on('new dialog', (str) => {
-    io.emit('new dialog', {
-      value: str,
-      nickname: socket.nickname,
-      type: 'dialog',
-    });
+
+  socket.on('moveCard', (list) => {
+    socket.to(roomId).broadcast.emit('getList', list);
   });
 });

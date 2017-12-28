@@ -18,76 +18,38 @@
 
   <body>
     <div id="app" class="container">
-      <div class="card blue-grey">
-        <div class="card-content white-text">
-          <span class="card-title">简易聊天室</span>
+      <div class="game" v-if="socketStatus">
+        <i class="border0" v-for="item in 4" :style="{left: (50+item*100)-100+'px'}"></i>
+        <i class="border1" v-for="item in 4" :style="{top: (50+item*100)-100+'px'}"></i>
+        <div class="box">
+            <p class="items" v-for="(item,index) in gameList" :key="index">
+              <span @click="chooseItem(index, index_)" class="item" :class="[itemClass(item_),(chooseIndex===index&&chooseIndex_===index_)?'choosed':'']" v-for="(item_,index_) in item" :key="index_">{{item_.show===1?animaConfig[item_.type]:''}}</span>
+            </p>
         </div>
-        <div class="card-action" v-if='nickname===""'>
-          <div class="input-field">
-            <input id='nickname' type="text" @keydown.enter="setNickName" v-model='username'>
-            <label for="nickname">nickname</label>
-            <a class="waves-effect waves-light btn" @click='setNickName'>确认昵称</a>
-          </div>
+      </div>
+      <div class="des" v-if="socketStatus">
+        <p>房间号：{{roomId}}</p>
+        <p>昵称：{{userName}}</p>
+        
+        <p v-if="gameStatus!==null">你的棋子颜色：<span :style="{color:heroType===1?'rgb(79, 100, 219)':'rgb(193, 228, 40)'}">{{heroType===1?'蓝色':'黄绿色'}}</span></p>
+        <p v-if="gameStatus!==null">当前回合：{{heroType===gameStatus?'你':'对手'}}</p>
+      </div>
+
+      <div class="row" v-if="!socketStatus">
+        <div class="input-field col s6 offset-s3">
+          <input v-model="userName" id="first_name2" type="text" class="validate">
+          <label class="active" for="first_name2">请输入昵称</label>
         </div>
-        <div class="card-action" v-else>
-          <div class="dialoglist" id="messagelist">
-            <template v-for='(item, index) in messagelist'>
-              <p v-if='item.type==="user"'>欢迎{{item.nickname}}加入房间</p>
-              <p v-else-if='item.nickname!==nickname' style="text-align:left">{{item.nickname}}:{{item.value}}</p>
-              <p v-else style="text-align:right">{{item.value}}</p>
-            </template>
-          </div>
-          <div class="input-field">
-            <input id="dialog" type="text" v-model='dialog' @keydown.enter="addDialog">
-            <label for="dialog">dialog</label>
-            <a class="waves-effect waves-light btn" @click='addDialog'>发送</a>
-          </div>
+        <div class="input-field col s6 offset-s3">
+          <input v-model="roomId" id="first_name2" type="text" class="validate">
+          <label class="active" for="first_name2">请输入房间号</label>
+        </div>
+        <div class="input-field col s6 offset-s3">
+            <a class="waves-effect waves-light btn" @click="connectSocket">创建/连接房间</a>
         </div>
       </div>
     </div>
   </body>
-  <script type="text/javascript">
-    var socket = io.connect('/')
-    var app = new Vue({
-      el: '#app ',
-      data: {
-        username: '',
-        nickname: '',
-        dialog: '',
-        messagelist: []
-      },
-      watch: {
-        messagelist: function() {
-          this.$nextTick(function() {
-            document.getElementById('messagelist').scrollTop = document.getElementById('messagelist').scrollHeight
-          })
-        }
-      },
-      methods: {
-        setNickName: function() {
-          if (!this.username.trim()) return
-          socket.emit('set nickname', this.username)
-        },
-        addDialog: function() {
-          if (!this.dialog.trim()) return
-          socket.emit('new dialog', this.dialog)
-          this.dialog = ''
-        }
-      }
-    })
-    socket.on('new user', function(data) {
-      console.log(data)
-      app.messagelist.push(data)
-    })
-    socket.on('login', function(data) {
-      console.log(data)
-      app.nickname = data.nickname
-    })
-    socket.on('new dialog', function(data) {
-      console.log(data)
-      app.messagelist.push(data)
-    })
-
-  </script>
+  <script src="./main.js"></script>
 
 </html>
