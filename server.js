@@ -1,12 +1,12 @@
 const express = require('express');
 const app = express();
 
-const port = process.env.PORT || 1234;
+const port = process.env.PORT || 80;
 
 app.use(express.static('static'));
 
 const server = app.listen(port, () => {
-  console.log(`technode is on port ${port} |`);
+  console.log(`technode is on port ${port}`);
 });
 
 const io = require('socket.io').listen(server);
