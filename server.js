@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 8000;
 
 app.use(express.static('static'));
 
@@ -30,6 +30,14 @@ io.sockets.on('connection', (socket) => {
     rooms[roomId].push(info.userName)
 
     socket.to(roomId).broadcast.emit('add user', info.userName);
+  });
+
+  setInterval(() => {
+    socket.emit('alive');
+  },10000)
+
+  socket.on('alive', (msg) => {
+    console.log(msg)
   });
 
   socket.on('moveCard', (list) => {

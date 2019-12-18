@@ -152,8 +152,7 @@ function connectSocket() {
     socket.on('error message', function (mess) {
         Materialize.toast(mess, 4000)
     });
+    socket.on('alive', function (mess) {
+      socket.emit('alive', '我还在');
+  });
 }
-
-setInterval(function () {
-    socket.emit('alive', '我还在');
-}, 10000)
