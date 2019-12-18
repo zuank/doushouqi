@@ -153,6 +153,6 @@ function connectSocket() {
         Materialize.toast(mess, 4000)
     });
     socket.on('alive', function (mess) {
-      socket.emit('alive', '我还在');
+      socket.emit('alive', app.userName);
   });
 }
