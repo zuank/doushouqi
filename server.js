@@ -26,14 +26,13 @@ io.sockets.on('connection', (socket) => {
         nowRound: 'player2'
       }
     }
-    
+    if (rooms[roomId].player1 == info.userName || rooms[roomId].player2 == info.userName) {
+      socket.emit('getList', rooms[roomId].list);
+      socket.emit('nowRound', rooms[roomId].nowRound);
+    }
     // 如果房间达到两人
-    if (rooms[roomId].player1 && rooms[roomId].player2) {
-      if (rooms[roomId].player1 == info.userName || rooms[roomId].player2 == info.userName) {
-          socket.emit('getList', rooms[roomId].list);
-          socket.to(roomId).broadcast.emit('add user', info.userName);
-          socket.emit('nowRound', rooms[roomId].nowRound);
-      } else {
+    if (!!rooms[roomId].player1&&!!rooms[roomId].player2){
+      if (rooms[roomId].player1!== info.userName && rooms[roomId].player2!== info.userName) {
         socket.emit('error message', '房间人满了，换个房间吧');
         return
       }
@@ -45,18 +44,20 @@ io.sockets.on('connection', (socket) => {
     } else if (rooms[roomId].player2 == ''){
       rooms[roomId].player2 =  info.userName
       socket.emit('getHeroType', 'player2');
+    } else {
+      socket.emit('getHeroType', info.userName == rooms[roomId].player1 ? 'player1' : 'player2');
     }
 
     socket.join(roomId);
-    socket.emit('getHeroType', info.userName == rooms[roomId].player1 ? 'player1' : 'player2');
     socket.to(roomId).broadcast.emit('add user', info.userName);
   });
 
   socket.on('moveCard', (list) => {
     rooms[roomId].list = list
-    rooms[roomId].nowRound = rooms[roomId].nowRound == rooms[roomId].player1 ? 'player2' : 'player1'
+    rooms[roomId].nowRound = (rooms[roomId].nowRound == 'player1' ? 'player2' : 'player1')
     socket.in(roomId).emit('getList', list);
     socket.in(roomId).emit('nowRound', rooms[roomId].nowRound);
+    console.log(rooms[roomId])
   });
 
   setInterval(() => {

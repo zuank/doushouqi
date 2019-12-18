@@ -146,18 +146,28 @@ var app = new Vue({
 
 
 function connectSocket() {
-    socket = io.connect('/chess/');
+  const path = ''+location.host+location.pathname
+  console.log(path)
+    socket = io.connect(path);
     socket.on('getList', function (data) {
-        app.gameList = data;
-        app.gameStatus = app.heroType
+      app.gameList = data;
     });
     socket.on('getHeroType', function (data) {
+      console.log(data)
         app.heroType = data
         app.socketStatus = true
+        if (!app.gameList[0] || !app.gameList[0].length){
+          app.gameList = [[],[],[],[]]
+          app.init()
+        }
     });
     socket.on('add user', function (userName) {
         Materialize.toast('欢迎' + userName + '加入房间!', 4000)
     });
+    socket.on('nowRound', function (nowRound) {
+      console.log(nowRound)
+      app.gameStatus = nowRound
+  });
     socket.on('error message', function (mess) {
         Materialize.toast(mess, 4000)
     });
