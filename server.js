@@ -17,19 +17,46 @@ io.sockets.on('connection', (socket) => {
   var roomId = ''
   socket.on('join room', (info) => {
     roomId = info.roomId
-    if (rooms[roomId] && rooms[roomId].length === 2) {
-      socket.emit('error message', '房间人满了，换个房间吧');
-      return
+    // 房间初始化
+    if (!rooms[roomId]) {
+      rooms[roomId] = {
+        player1: '',
+        player2: '',
+        list:[],
+        nowRound: 'player2'
+      }
     }
+    
+    // 如果房间达到两人
+    if (rooms[roomId].player1 && rooms[roomId].player2) {
+      if (rooms[roomId].player1 == info.userName || rooms[roomId].player2 == info.userName) {
+          socket.emit('getList', rooms[roomId].list);
+          socket.to(roomId).broadcast.emit('add user', info.userName);
+          socket.emit('nowRound', rooms[roomId].nowRound);
+      } else {
+        socket.emit('error message', '房间人满了，换个房间吧');
+        return
+      }
+    }
+
+    if (rooms[roomId].player1 == ''){
+      rooms[roomId].player1 = info.userName
+      socket.emit('getHeroType', 'player1');
+    } else if (rooms[roomId].player2 == ''){
+      rooms[roomId].player2 =  info.userName
+      socket.emit('getHeroType', 'player2');
+    }
+
     socket.join(roomId);
-
-    if (!rooms[roomId]) rooms[roomId] = []
-
-    socket.emit('getHeroType', rooms[roomId].length);
-
-    rooms[roomId].push(info.userName)
-
+    socket.emit('getHeroType', info.userName == rooms[roomId].player1 ? 'player1' : 'player2');
     socket.to(roomId).broadcast.emit('add user', info.userName);
+  });
+
+  socket.on('moveCard', (list) => {
+    rooms[roomId].list = list
+    rooms[roomId].nowRound = rooms[roomId].nowRound == rooms[roomId].player1 ? 'player2' : 'player1'
+    socket.in(roomId).emit('getList', list);
+    socket.in(roomId).emit('nowRound', rooms[roomId].nowRound);
   });
 
   setInterval(() => {
@@ -38,9 +65,5 @@ io.sockets.on('connection', (socket) => {
 
   socket.on('alive', (msg) => {
     console.log(msg)
-  });
-
-  socket.on('moveCard', (list) => {
-    socket.to(roomId).broadcast.emit('getList', list);
   });
 });

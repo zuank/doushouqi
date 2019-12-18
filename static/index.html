@@ -31,7 +31,7 @@
         <p>房间号：{{roomId}}</p>
         <p>昵称：{{userName}}</p>
         
-        <p v-if="gameStatus!==null">你的棋子颜色：<span :style="{color:heroType===1?'rgb(79, 100, 219)':'rgb(193, 228, 40)'}">{{heroType===1?'蓝色':'黄绿色'}}</span></p>
+        <p v-if="gameStatus!==null">你的棋子颜色：<span :style="{color:heroType==='player1'?'rgb(79, 100, 219)':'rgb(193, 228, 40)'}">{{heroType==='player1'?'蓝色':'黄绿色'}}</span></p>
         <p v-if="gameStatus!==null">当前回合：{{heroType===gameStatus?'你':'对手'}}</p>
       </div>
 
@@ -51,5 +51,4 @@
     </div>
   </body>
   <script src="./main.js"></script>
-
 </html>

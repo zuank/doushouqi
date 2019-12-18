@@ -15,37 +15,45 @@ var animaConfig = {
 }
 
 var socket = null
+connectSocket();
+var chessInfo = JSON.parse(localStorage['chessInfo'] ||'{}')
 var app = new Vue({
     el: '#app ',
     created: function () {
+      if (chessInfo.roomId) {
+        this.userName = chessInfo.userName
+        this.roomId = chessInfo.roomId
+        this.connectSocket()
+      } else {
         this.init()
+      }
     },
     data: {
         animaConfig: animaConfig,
-        heroType: 0,
+        heroType: '',
         socketStatus: false,
         userName: '',
         roomId: '',
-        gameStatus: null,
+        gameStatus: 'player2',
         chooseIndex: null, //选中的卡片
         chooseIndex_: null, // 选中的卡片
         list: [
-            {type: '1', show: 2, heroType: 0},
-            {type: '2', show: 2, heroType: 0},
-            {type: '3', show: 2, heroType: 0},
-            {type: '4', show: 2, heroType: 0},
-            {type: '5', show: 2, heroType: 0},
-            {type: '6', show: 2, heroType: 0},
-            {type: '7', show: 2, heroType: 0},
-            {type: '8', show: 2, heroType: 0},
-            {type: '1', show: 2, heroType: 1},
-            {type: '2', show: 2, heroType: 1},
-            {type: '3', show: 2, heroType: 1},
-            {type: '4', show: 2, heroType: 1},
-            {type: '5', show: 2, heroType: 1},
-            {type: '6', show: 2, heroType: 1},
-            {type: '7', show: 2, heroType: 1},
-            {type: '8', show: 2, heroType: 1}
+            {type: '1', show: 2, heroType: 'player1'},
+            {type: '2', show: 2, heroType: 'player1'},
+            {type: '3', show: 2, heroType: 'player1'},
+            {type: '4', show: 2, heroType: 'player1'},
+            {type: '5', show: 2, heroType: 'player1'},
+            {type: '6', show: 2, heroType: 'player1'},
+            {type: '7', show: 2, heroType: 'player1'},
+            {type: '8', show: 2, heroType: 'player1'},
+            {type: '1', show: 2, heroType: 'player2'},
+            {type: '2', show: 2, heroType: 'player2'},
+            {type: '3', show: 2, heroType: 'player2'},
+            {type: '4', show: 2, heroType: 'player2'},
+            {type: '5', show: 2, heroType: 'player2'},
+            {type: '6', show: 2, heroType: 'player2'},
+            {type: '7', show: 2, heroType: 'player2'},
+            {type: '8', show: 2, heroType: 'player2'}
         ],
         gameList: [[], [], [], []]
     },
@@ -67,17 +75,20 @@ var app = new Vue({
                 userName: this.userName,
                 roomId: this.roomId
             });
+            localStorage['chessInfo'] = JSON.stringify({
+                userName: this.userName,
+                roomId: this.roomId
+            })
         },
         itemClass(item) {
             if (item.show === 0) return 'opra'
             if (item.show === 2) return ''
             if (item.show === 1) {
-                return item.heroType === 0 ? 'hero0' : 'hero1'
+                return item.heroType === 'player1' ? 'hero0' : 'hero1'
             }
         },
         moveCard() {
             socket.emit('moveCard', this.gameList);
-            this.gameStatus = this.gameStatus === 0 ? 1 : 0
         },
         checkNext(index, index_) {
             return (Math.abs(index_ - this.chooseIndex_) + Math.abs(index - this.chooseIndex) === 1)
@@ -133,7 +144,6 @@ var app = new Vue({
     }
 })
 
-connectSocket();
 
 function connectSocket() {
     socket = io.connect('/');
@@ -144,7 +154,6 @@ function connectSocket() {
     socket.on('getHeroType', function (data) {
         app.heroType = data
         app.socketStatus = true
-        app.gameStatus = 1
     });
     socket.on('add user', function (userName) {
         Materialize.toast('欢迎' + userName + '加入房间!游戏开始!', 4000)
