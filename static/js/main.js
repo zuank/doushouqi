@@ -156,7 +156,7 @@ function connectSocket() {
         app.socketStatus = true
     });
     socket.on('add user', function (userName) {
-        Materialize.toast('欢迎' + userName + '加入房间!游戏开始!', 4000)
+        Materialize.toast('欢迎' + userName + '加入房间!', 4000)
     });
     socket.on('error message', function (mess) {
         Materialize.toast(mess, 4000)

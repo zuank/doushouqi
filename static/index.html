@@ -3,15 +3,14 @@
 
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="./css/materialize.min.css">
+    <link rel="stylesheet" href="./css/main.css">
+
     <script src="socket.io/socket.io.js"></script>
-    <script src="https://unpkg.com/vue" charset="utf-8"></script>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+    <script src="./js/vue.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/materialize.min.js"></script>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>童年版斗兽棋</title>
   </head>
@@ -31,7 +30,7 @@
         <p>房间号：{{roomId}}</p>
         <p>昵称：{{userName}}</p>
         
-        <p v-if="gameStatus!==null">你的棋子颜色：<span :style="{color:heroType==='player1'?'rgb(79, 100, 219)':'rgb(193, 228, 40)'}">{{heroType==='player1'?'蓝色':'黄绿色'}}</span></p>
+        <p v-if="gameStatus!==null">你的棋子颜色：<span :style="{color:heroType==='player2'?'rgb(79, 100, 219)':'rgb(193, 228, 40)'}">{{heroType==='player2'?'蓝色':'黄绿色'}}</span></p>
         <p v-if="gameStatus!==null">当前回合：{{heroType===gameStatus?'你':'对手'}}</p>
       </div>
 
@@ -50,5 +49,5 @@
       </div>
     </div>
   </body>
-  <script src="./main.js"></script>
+  <script src="./js/main.js"></script>
 </html>
