@@ -146,7 +146,7 @@ var app = new Vue({
 
 
 function connectSocket() {
-    socket = io.connect('');
+    socket = io.connect('/chess/');
     socket.on('getList', function (data) {
         app.gameList = data;
         app.gameStatus = app.heroType
