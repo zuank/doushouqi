@@ -17,7 +17,7 @@
 
   <body>
     <div id="app" class="container">
-      <div class="game" v-if="socketStatus">
+      <div class="game" v-if="socketStatus" style="transform: scale(.7)">
         <i class="border0" v-for="item in 4" :style="{left: (50+item*100)-100+'px'}"></i>
         <i class="border1" v-for="item in 4" :style="{top: (50+item*100)-100+'px'}"></i>
         <div class="box">
