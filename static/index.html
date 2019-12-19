@@ -32,6 +32,7 @@
         
         <p v-if="gameStatus!==null">你的棋子颜色：<span :style="{color:heroType==='player2'?'rgb(79, 100, 219)':'rgb(193, 228, 40)'}">{{heroType==='player2'?'蓝色':'黄绿色'}}</span></p>
         <p v-if="gameStatus!==null">当前回合：{{heroType===gameStatus?'你':'对手'}}</p>
+        <p class="restart" @click="restart">重新开始</p>
       </div>
 
       <div class="row" v-if="!socketStatus">

@@ -57,6 +57,11 @@ var app = new Vue({
         gameList: [[], [], [], []]
     },
     methods: {
+        restart(){
+          localStorage.clear('chessInfo')
+          this.init()
+          this.socketStatus = false
+        },
         init() {
             // 对卡片做乱序处理
             var list = []
