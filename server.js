@@ -47,7 +47,6 @@ io.sockets.on('connection', (socket) => {
     } else {
       socket.emit('getHeroType', info.userName == rooms[roomId].player1 ? 'player1' : 'player2');
     }
-
     socket.join(roomId);
     socket.to(roomId).broadcast.emit('add user', info.userName);
   });
@@ -55,9 +54,8 @@ io.sockets.on('connection', (socket) => {
   socket.on('moveCard', (list) => {
     rooms[roomId].list = list
     rooms[roomId].nowRound = (rooms[roomId].nowRound == 'player1' ? 'player2' : 'player1')
-    socket.in(roomId).emit('getList', list);
-    socket.in(roomId).emit('nowRound', rooms[roomId].nowRound);
-    console.log(rooms[roomId])
+    io.in(roomId).emit('getList', list);
+    io.in(roomId).emit('nowRound', rooms[roomId].nowRound);
   });
 
   setInterval(() => {

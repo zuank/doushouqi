@@ -20,12 +20,11 @@ var chessInfo = JSON.parse(localStorage['chessInfo'] ||'{}')
 var app = new Vue({
     el: '#app ',
     created: function () {
+      this.init()
       if (chessInfo.roomId) {
         this.userName = chessInfo.userName
         this.roomId = chessInfo.roomId
         this.connectSocket()
-      } else {
-        this.init()
       }
     },
     data: {
@@ -89,13 +88,13 @@ var app = new Vue({
         },
         moveCard() {
             socket.emit('moveCard', this.gameList);
+            this.gameStatus = ''
         },
         checkNext(index, index_) {
             return (Math.abs(index_ - this.chooseIndex_) + Math.abs(index - this.chooseIndex) === 1)
         },
         chooseItem(index, index_) {
             // 判断当前是否可以操作
-            console.log(this.gameStatus !== this.heroType)
             if (this.gameStatus !== this.heroType) return
 
             var item = this.gameList[index][index_]
@@ -146,26 +145,26 @@ var app = new Vue({
 
 
 function connectSocket() {
-  const path = ''+location.host+location.pathname
-  console.log(path)
-    socket = io.connect(path);
+  const config = {
+    path: ''
+  }
+  if (location.pathname.indexOf('chess')!==-1){
+    config.path = '/chess/socket.io'
+  }
+    socket = io.connect('/',config);
     socket.on('getList', function (data) {
-      app.gameList = data;
+      if (data.length){
+        app.gameList = data;
+      }
     });
     socket.on('getHeroType', function (data) {
-      console.log(data)
         app.heroType = data
         app.socketStatus = true
-        if (!app.gameList[0] || !app.gameList[0].length){
-          app.gameList = [[],[],[],[]]
-          app.init()
-        }
     });
     socket.on('add user', function (userName) {
         Materialize.toast('欢迎' + userName + '加入房间!', 4000)
     });
     socket.on('nowRound', function (nowRound) {
-      console.log(nowRound)
       app.gameStatus = nowRound
   });
     socket.on('error message', function (mess) {
