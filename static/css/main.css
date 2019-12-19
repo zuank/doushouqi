@@ -11,6 +11,7 @@ body .container {
 .container .game {
   width: 400px;
   height: 400px;
+  margin: 0 auto;
   position: relative;
 }
 .container .game .items {
